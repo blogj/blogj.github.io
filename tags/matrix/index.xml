@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>MATRIX on 孤岛</title>
+    <link>https://gao4.top/tags/matrix/</link>
+    <description>Recent content in MATRIX on 孤岛</description>
+    <image>
+      <title>孤岛</title>
+      <url>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Mon, 11 Sep 2023 13:31:00 +0000</lastBuildDate>
+    <atom:link href="https://gao4.top/tags/matrix/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>docker快速搭建MATRIX服务器synapse-2023</title>
+      <link>https://gao4.top/227.html/</link>
+      <pubDate>Mon, 11 Sep 2023 13:31:00 +0000</pubDate>
+      <guid>https://gao4.top/227.html/</guid>
+      <description>docker 快速搭建 MATRIX 服务器 synapse
+环境 debian11 docker synapse:v1.83.0 postgres:12-alpine 域名一个 不能轻易修改 ipv6 地址 安装 新建一个文件夹建立 yml 文件nano docker-compose.yml内容如下注意自己 生成数据库密码
+#也感谢糖喵提供的配置文件~ version: &amp;#34;3.4&amp;#34; services: synapse: hostname: matrix image: matrixdotorg/synapse:v1.83.0 restart: always container_name: matrix_server depends_on: - db - redis ports: - &amp;#34;127.0.0.1:8001:8008&amp;#34; volumes: - ./synapse/data:/data networks: - synapse_network - external_network healthcheck: test: [&amp;#34;CMD-SHELL&amp;#34;, &amp;#34;curl -s localhost:8008/health || exit 1&amp;#34;] db: image: postgres:12-alpine restart: always container_name: matrix_db volumes: - ./synapse/db:/var/lib/postgresql/data environment: POSTGRES_USER: synapse POSTGRES_PASSWORD: 配置数据库密码 POSTGRES_DB: synapse POSTGRES_INITDB_ARGS: &amp;#34;--encoding=&amp;#39;UTF8&amp;#39; --lc-collate=&amp;#39;C&amp;#39; --lc-ctype=&amp;#39;C&amp;#39;&amp;#34; networks: - synapse_network healthcheck: test: [&amp;#34;CMD&amp;#34;, &amp;#34;pg_isready&amp;#34;, &amp;#34;-U&amp;#34;, &amp;#34;synapse&amp;#34;] redis: image: redis:6.</description>
+    </item>
+  </channel>
+</rss>
