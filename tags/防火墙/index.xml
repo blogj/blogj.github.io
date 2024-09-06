@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>防火墙 on 孤岛</title>
+    <link>https://gao4.top/tags/%E9%98%B2%E7%81%AB%E5%A2%99/</link>
+    <description>Recent content in 防火墙 on 孤岛</description>
+    <image>
+      <title>孤岛</title>
+      <url>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.119.0</generator>
+    <language>zh</language>
+    <lastBuildDate>Fri, 06 Sep 2024 09:20:02 +0800</lastBuildDate>
+    <atom:link href="https://gao4.top/tags/%E9%98%B2%E7%81%AB%E5%A2%99/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Openwrt系列之打开ipv6端口访问</title>
+      <link>https://gao4.top/20240906.html/</link>
+      <pubDate>Fri, 06 Sep 2024 09:20:02 +0800</pubDate>
+      <guid>https://gao4.top/20240906.html/</guid>
+      <description>打开ipv6 访问 很简单只需要把防火墙打开就行就可以访问端口上的openwrt服务
+第一步 打开防火墙区域设置 第二步 防火墙 通信规则 </description>
+    </item>
+  </channel>
+</rss>
