@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Manjaro on 孤岛</title>
+    <link>https://gao4.top/tags/manjaro/</link>
+    <description>Recent content in Manjaro on 孤岛</description>
+    <image>
+      <title>孤岛</title>
+      <url>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.119.0</generator>
+    <language>zh</language>
+    <lastBuildDate>Fri, 11 Oct 2024 14:30:50 +0800</lastBuildDate>
+    <atom:link href="https://gao4.top/tags/manjaro/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Manjaro发行版本远程桌面方案2024 </title>
+      <link>https://gao4.top/20241011.html/</link>
+      <pubDate>Fri, 11 Oct 2024 14:30:50 +0800</pubDate>
+      <guid>https://gao4.top/20241011.html/</guid>
+      <description>预览图 前言 一直在全网寻找一个不卡的远程桌面方案所以就找到到了这一个远程游戏的解决方法非常合适win去远程Linux发行版本
+优点 非常流程 非常流程 非常流程 130公里 双边移动宽带ipv6 通过wg远程 1080 60fps 也就是说能做到60帧率基本上和副屏幕差不多了 manjaro下安装方法 注意都是在root用户下执行下面命令
+直接去github去下载安装包是是启动不成功的，搜索引擎说可以安装sunshine-git版本，可惜我不会 提供一个网上的包 不放心可以去试试sunshine-git版本
+https://0x0.st/XE4O.tar.zst 这是包（如果你不相信我，就不要使用它）
+重命名为 sunshine-0.23.1-5-x86_64.pkg.tar.zst 安装命令如下
+sudo pacman -U sunshine-0.23.1-5-x86_64.pkg.tar.zst 启动命令为
+sunshine 默认访问为本机访问所以需要ssh隧道 默认端口为https://localhost:47990/ 因为我们启动了ssh隧道就访问https://localhost:47991/ 隧道设置如下图 Linux下自启动设置 官方文档 编辑
+nano /etc/systemd/system/sunshine.service 内容如下
+[Unit] Description=Sunshine self-hosted game stream host for Moonlight. StartLimitIntervalSec=500 StartLimitBurst=5 [Service] ExecStart=/usr/bin/sunshine Restart=on-failure RestartSec=5s #Flatpak Only #ExecStop=flatpak kill dev.lizardbyte.sunshine [Install] WantedBy=multi-user.target 在关闭软件情况下依次执行下面相关命令
+systemctl daemon-reload systemctl enable sunshine.service systemctl start sunshine.service 注意事项 注意客户端连接需要moonlight这个软件 下载连接如下</description>
+    </item>
+  </channel>
+</rss>
