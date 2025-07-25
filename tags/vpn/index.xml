@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>VPN on 孤岛</title>
+    <link>https://gao4.top/tags/vpn/</link>
+    <description>Recent content in VPN on 孤岛</description>
+    <image>
+      <title>孤岛</title>
+      <url>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.148.0</generator>
+    <language>zh</language>
+    <lastBuildDate>Mon, 11 Sep 2023 13:31:00 +0000</lastBuildDate>
+    <atom:link href="https://gao4.top/tags/vpn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>docker快速搭建MATRIX服务器synapse-2023</title>
+      <link>https://gao4.top/227.html/</link>
+      <pubDate>Mon, 11 Sep 2023 13:31:00 +0000</pubDate>
+      <guid>https://gao4.top/227.html/</guid>
+      <description>&lt;p&gt;docker 快速搭建 MATRIX 服务器 synapse&lt;/p&gt;
+&lt;h2 id=&#34;环境&#34;&gt;环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;debian11&lt;/li&gt;
+&lt;li&gt;docker&lt;/li&gt;
+&lt;li&gt;synapse:v1.83.0&lt;/li&gt;
+&lt;li&gt;postgres:12-alpine&lt;/li&gt;
+&lt;li&gt;域名一个 不能轻易修改&lt;/li&gt;
+&lt;li&gt;ipv6 地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;安装&#34;&gt;安装&lt;/h2&gt;
+&lt;p&gt;新建一个文件夹建立 yml 文件&lt;code&gt;nano docker-compose.yml&lt;/code&gt;内容如下注意自己 生成数据库密码&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;#也感谢糖喵提供的配置文件~
+version: &amp;#34;3.4&amp;#34;
+
+services:
+  synapse:
+    hostname: matrix
+    image: matrixdotorg/synapse:v1.83.0
+    restart: always
+    container_name: matrix_server
+    depends_on:
+      - db
+      - redis
+    ports:
+      - &amp;#34;127.0.0.1:8001:8008&amp;#34;
+    volumes:
+      - ./synapse/data:/data
+    networks:
+      - synapse_network
+      - external_network
+    healthcheck:
+      test: [&amp;#34;CMD-SHELL&amp;#34;, &amp;#34;curl -s localhost:8008/health || exit 1&amp;#34;]
+
+  db:
+    image: postgres:12-alpine
+    restart: always
+    container_name: matrix_db
+    volumes:
+      - ./synapse/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: 配置数据库密码
+      POSTGRES_DB: synapse
+      POSTGRES_INITDB_ARGS: &amp;#34;--encoding=&amp;#39;UTF8&amp;#39; --lc-collate=&amp;#39;C&amp;#39; --lc-ctype=&amp;#39;C&amp;#39;&amp;#34;
+    networks:
+      - synapse_network
+    healthcheck:
+      test: [&amp;#34;CMD&amp;#34;, &amp;#34;pg_isready&amp;#34;, &amp;#34;-U&amp;#34;, &amp;#34;synapse&amp;#34;]
+
+  redis:
+    image: redis:6.0-alpine
+    restart: always
+    container_name: matrix_redis
+    volumes:
+      - ./synapse/redis:/data
+    networks:
+      - synapse_network
+    healthcheck:
+      test: [&amp;#34;CMD&amp;#34;, &amp;#34;redis-cli&amp;#34;, &amp;#34;ping&amp;#34;]
+
+networks:
+  synapse_network:
+    internal: true
+  external_network:
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;运行如下内容进行生成配置文件&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>headscale开源服务器搭建</title>
+      <link>https://gao4.top/723.html/</link>
+      <pubDate>Wed, 29 Dec 2021 14:16:00 +0000</pubDate>
+      <guid>https://gao4.top/723.html/</guid>
+      <description>&lt;h2 id=&#34;2022年1月5日更新&#34;&gt;2022年1月5日更新&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;GitHub仓库的文档已更新，可正常运行。&lt;/li&gt;
+&lt;li&gt;配置文件里本地ssl证书设置好了后不起效果&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/juanfont/headscale&#34;&gt;headscale&lt;/a&gt;是一款今年 2021 年出现的一款 Tailscale 控制服务器的开源实现。也是唯一的一款。望能发展壮大。&lt;/p&gt;
+&lt;h2 id=&#34;环境&#34;&gt;环境&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Ubuntu 18.04.3（理论上正常支持systemctl的Linux发行版本都能搭建）&lt;/li&gt;
+&lt;li&gt;端口8080&lt;/li&gt;
+&lt;li&gt;版本为v0.11&lt;br&gt;
+&lt;img alt=&#34;使用版本&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/12/1728101212.png&#34; title=&#34;使用版本&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;注意事项&#34;&gt;注意事项&lt;/h2&gt;
+&lt;p&gt;官方的当前时间也是本文章撰写的时间。最新版本的配置文件不兼容版本号为&lt;strong&gt;v0.12.1&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;搭建过程&#34;&gt;搭建过程&lt;/h2&gt;
+&lt;p&gt;下载二进制文件与源代码&lt;br&gt;
+&lt;a href=&#34;https://github.com/juanfont/headscale/releases/download/v0.11.0/headscale_0.11.0_linux_amd64&#34;&gt;&lt;strong&gt;headscale_0.11.0_linux_amd64&lt;/strong&gt;&lt;/a&gt;&lt;br&gt;
+&lt;a href=&#34;https://github.com/juanfont/headscale/archive/refs/tags/v0.11.0.zip&#34;&gt;&lt;strong&gt;Source code&lt;/strong&gt; (zip)&lt;/a&gt;&lt;br&gt;
+&lt;img alt=&#34;文件&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/12/1644842355.png&#34; title=&#34;文件&#34;&gt;&lt;br&gt;
+上传headscale_0.11.0_linux_amd64文件到&lt;code&gt;/usr/local/bin&lt;/code&gt;并重命名为&lt;code&gt;headscale&lt;/code&gt;并赋予执行权限&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;chmod 755 /usr/local/bin/headscale
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;登录服务器创建目录及文件&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkdir /etc/headscale
+cd /etc/headscale
+touch db.sqlite
+touch config.yaml
+touch derp.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;注意在0.12版本已不需要生成密钥会自动生成,或许需要安装&lt;code&gt;wireguard&lt;/code&gt;我们是0.11版本所以需要手动生成&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;apt-get update
+apt-get install wireguard
+wg genkey &amp;gt; private.key
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;最后目录结构如下&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root@10-255-1-181:/etc/headscale# tree
+.
+├── config.yaml
+├── db.sqlite
+├── derp.yaml
+└── private.key
+
+0 directories, 4 files
+root@10-255-1-181:/etc/headscale#
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;填写config.yaml内容，内容来源于解压的v0.11.0.zip压缩包config-example.yaml内容&lt;br&gt;
+&lt;img alt=&#34;config-example&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/12/1966737605.png&#34; title=&#34;config-example&#34;&gt;&lt;br&gt;
+填写derp.yaml内容内容来源于解压的v0.11.0.zip压缩包derp-example.yaml内容&lt;br&gt;
+&lt;img alt=&#34;derp-example&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/12/3535675087.png&#34; title=&#34;derp-example&#34;&gt;&lt;/p&gt;
+&lt;p&gt;撰写&lt;code&gt;headscale.service&lt;/code&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano  /etc/systemd/system/headscale.service
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;[Unit]
+Description=headscale
+After=network.target&lt;/p&gt;
+&lt;p&gt;[Service]
+WorkingDirectory=/etc/headscale
+ExecStart=/usr/local/bin/headscale serve&lt;/p&gt;
+&lt;h1 id=&#34;disable-debug-mode&#34;&gt;Disable debug mode&lt;/h1&gt;
+&lt;p&gt;Environment=GIN_MODE=release&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>折腾NAS中用的软件资源分享</title>
+      <link>https://gao4.top/686.html/</link>
+      <pubDate>Sun, 24 Oct 2021 18:00:00 +0000</pubDate>
+      <guid>https://gao4.top/686.html/</guid>
+      <description>&lt;h1 id=&#34;资源链接阿里云盘&#34;&gt;资源链接阿里云盘&lt;/h1&gt;
+&lt;p&gt;我用阿里云盘分享了「NAS常用软件引导软件系统镜像」，你可以不限速下载🚀&lt;br&gt;
+复制这段内容打开「阿里云盘」App 即可获取&lt;br&gt;
+链接：&lt;a href=&#34;https://www.aliyundrive.com/s/QUm851phfC7&#34;&gt;https://www.aliyundrive.com/s/QUm851phfC7&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;esxi常用系统ova模板&#34;&gt;Esxi常用系统ova模板&lt;/h2&gt;
+&lt;p&gt;搜集来自于sysin博客，sysin博主分享是百度云，本博客下载下来后上传至阿里云盘全部为&lt;strong&gt;标准分区（新版）&lt;/strong&gt;&lt;br&gt;
+&lt;img alt=&#34;全部模板&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/680834712.png&#34; title=&#34;全部模板&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;模板来源&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/3310680356.png&#34; title=&#34;模板来源&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;esxi67集成25g与8111网卡驱动&#34;&gt;ESXi6.7集成2.5G与8111网卡驱动&lt;/h2&gt;
+&lt;p&gt;集成了rtl8125b网卡驱动以及rtl8111驱动，为什么不集成7.0的，是因为集成不了，据说新版本esxi7.0有什么改动。&lt;br&gt;
+&lt;img alt=&#34;esxi6.7驱动&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/185705712.png&#34; title=&#34;esxi6.7驱动&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;openwrt-x86_64软路由&#34;&gt;openwrt x86_64软路由&lt;/h2&gt;
+&lt;p&gt;使用GitHub编译结果，&lt;a href=&#34;https://github.com/Qifcn/Actions-OpenWrt&#34;&gt;Qifcn/Actions-OpenWrt: A template for building OpenWrt with GitHub Actions | 使用 GitHub Actions 云编译 OpenWrt&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;集成了&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;tailscale&lt;/li&gt;
+&lt;li&gt;wireguard&lt;/li&gt;
+&lt;li&gt;内核分区扩大至100m 根分区扩至512m&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img alt=&#34;压缩包&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/1623699456.png&#34; title=&#34;压缩包&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;resilio分享&#34;&gt;resilio分享&lt;/h3&gt;
+&lt;p&gt;这些软件我集成密钥形式&lt;br&gt;
+&lt;a href=&#34;https://gao4.top/sync&#34;&gt;SYNC同步网盘 - 孤岛 (gao4.top)&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>tailscale docker上安装搭建方法</title>
+      <link>https://gao4.top/555.html/</link>
+      <pubDate>Thu, 20 May 2021 13:31:00 +0000</pubDate>
+      <guid>https://gao4.top/555.html/</guid>
+      <description>&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-16.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;启动&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;docker run -d --restart=always --name=tailscaled -v /var/lib:/var/lib -v /dev/net/tun:/dev/net/tun --network=host --privileged fastandfearless/tailscale
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;登录&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;docker exec tailscaled tailscale up
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;查看状态&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;docker exec tailscaled tailscale status
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;停止tailscale容器&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;docker stop tailscaled 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;删除tailscale容器&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;docker rm tailscaled 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/tailscale/tailscale/blob/main/Dockerfile&#34;&gt;参考官方docker编译文件&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://hub.docker.com/r/fastandfearless/tailscale/&#34;&gt;镜像地址&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>关于NAS的小折腾填坑</title>
+      <link>https://gao4.top/530.html/</link>
+      <pubDate>Tue, 18 May 2021 11:38:59 +0000</pubDate>
+      <guid>https://gao4.top/530.html/</guid>
+      <description>&lt;h1 id=&#34;关于nas的小折腾填坑&#34;&gt;关于NAS的小折腾填坑&lt;/h1&gt;
+&lt;p&gt;【写作说明】：此篇文章谨记折腾NAS途中的小问题可能对您有所帮助，因为每个人网络环境不一样，你可以参考一下。&lt;/p&gt;
+&lt;h2 id=&#34;关于电信路由器&#34;&gt;关于电信路由器&lt;/h2&gt;
+&lt;p&gt;   四川电信，可以在微信公众号，给找客服切换光猫桥接模式，顺便要了公网IP，没有网上那么难，很顺利就要到了，也没有去折腾光猫破解什么的，因为网上超级密码都不正确&lt;/p&gt;
+&lt;h3 id=&#34;桥接后遇到的问题&#34;&gt;桥接后遇到的问题&lt;/h3&gt;
+&lt;p&gt;过一天死机，重启恢复，开始怀疑固件有问题，OPenwrt固件刷到工控n2800主板上，随后换固件pfSense，还是遇到过一天死机重启恢复，应该不是固件与硬件问题随后换回OPenwrt，每天早上5点定时重启（应该是电信定时换IP问题猜测）。问题解决，用过几个月后，突然连不上DDNS（幸亏没有出现死机问题），随后发现OPenwrt固件空间满了，随后按照网上教程把剩下的30G空间重新远程ssh连上路由器分区挂载，问题解决。&lt;/p&gt;
+&lt;h2 id=&#34;关于移动宽带&#34;&gt;关于移动宽带&lt;/h2&gt;
+&lt;p&gt;最开始移动宽带，公网iP就不要想了，不过移动居然提供了IPv6，光猫很顺利就通过网上超级密码进入后台，建议把后台截图，防止出错，很顺利设置成桥接模式，用Openwrt拨号，折腾IPv6远程访问，因为不可能每个服务都做ddns，也不现实，就用网上恩山论坛的方法在OPenwrt上安装 &lt;strong&gt;socat&lt;/strong&gt;工具，桥接主路由ipv6端口到下面ipv4内网服务端口，跟端口映射是不是很像，每次重启机器需要重新设置运行命令，就放OPenwrt，web界面有一个开机启动设置的地方。使用就搜索吧&lt;img alt=&#34;关于NAS的小折腾填坑&#34; loading=&#34;lazy&#34; src=&#34;https://res.smzdm.com/images/emotions/147.gif&#34;&gt; &lt;/p&gt;
+&lt;h3 id=&#34;移动ipv6速度&#34;&gt;移动ipv6速度&lt;/h3&gt;
+&lt;p&gt;挺快的，和老弟相隔一个城市200多公里，传输速度相同的移动宽带。跑到了满速100M，也就是上行12.5M/s 左右当时硬件接口是100M的，后面换电信，硬件接口千兆了就没机会测试了。&lt;/p&gt;
+&lt;h3 id=&#34;resiliosync软件&#34;&gt; Resilio Sync软件&lt;/h3&gt;
+&lt;p&gt;记得17年接触当时还没，懂？ 21年重新安装，据说恢复。实际测试也恢复了。&lt;/p&gt;
+&lt;h3 id=&#34;遇到问题&#34;&gt;遇到问题&lt;/h3&gt;
+&lt;p&gt;docker安装一定要把网络设置为和本地一样的网络，也就是宿主机，或者给一个IP给容器，不然会走中继，没速度，有公网ip会自动打洞，不然没速度也，&lt;strong&gt;记得设置就是host模式&lt;/strong&gt;，吐槽一句，unraid的docker就看个状态，详细的还是ssh吧&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://post.smzdm.com/p/ax08z5gw/pic_2/&#34;&gt;&lt;/a&gt;网络模式&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/Snipaste_2021-05-18_11-12-16.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt; Resilio Sync用docker安装方式与Linux安装方式同步位置没法修改，是配置文件的限制，修改配置文件就OK了&lt;img alt=&#34;关于NAS的小折腾填坑&#34; loading=&#34;lazy&#34; src=&#34;https://res.smzdm.com/images/emotions/147.gif&#34;&gt; &lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://post.smzdm.com/p/ax08z5gw/pic_3/&#34;&gt;&lt;img alt=&#34;关于NAS的小折腾填坑&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/Snipaste_2021-01-29_15-15-24-1024x514-1.png&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;遇到的问题就这么多，安装谁都会，软件的使用过程中问题就很奈斯了。&lt;/p&gt;
+&lt;h2 id=&#34;异地组网问题&#34;&gt;异地组网问题&lt;/h2&gt;
+&lt;p&gt;有一个和另一个地方的群晖组网&lt;/p&gt;
+&lt;p&gt;wireguard软件，全平台，没法动态更新ddns的域名，可以通过脚本检测断网重启接口解决，网上是这么说，我是定时重启，openwrt不知道怎么设置，没法中继互联，配置复杂？？，简直就是 就这么着吧，弃用&lt;/p&gt;
+&lt;p&gt;传统的Ipsec 服务端为OPenwrt，群晖现成的接口，可惜群晖下，断线重连只最多5次，有时能连上有时不行，弃用&lt;/p&gt;
+&lt;p&gt;现在用的方案tailscale，只需要登陆账号，全平台，自动打洞，支持群晖，前几天支持OPenwrt ，有一个小问题就是安装包对于arm平台的OPenwrt偏大，可能会把空间占满，只能恢复出厂了。子网服务与自建中继付费10美元/月&lt;/p&gt;
+&lt;p&gt;现在还在用的方案。&lt;/p&gt;
+&lt;p&gt;可能对你有所帮助，就这样吧&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Tailscale VPN初步安装体验</title>
+      <link>https://gao4.top/503.html/</link>
+      <pubDate>Thu, 13 May 2021 16:13:00 +0000</pubDate>
+      <guid>https://gao4.top/503.html/</guid>
+      <description>&lt;h2 id=&#34;序言&#34;&gt;序言&lt;/h2&gt;
+&lt;p&gt;初步体验是一个基于&lt;a href=&#34;http://wireguard.com&#34;&gt;wireguard&lt;/a&gt;的新的星形组网软件（功能之一），对比WGvpn最大的不同就是增加了公匙交换系统，免配置组网，只需要安装客户端登录账号就可以组网，支持p2p打洞，付费自建中继功能。支持基本上全平台支持Linux|群晖|Openrt|Window|Mac等常见客户端，docker也可以安装。&lt;/p&gt;
+&lt;h2 id=&#34;openwrt-x86上安装&#34;&gt;Openwrt X86上安装&lt;/h2&gt;
+&lt;p&gt;2021年5月13日更新&lt;/p&gt;
+&lt;p&gt;openwrt 仓库已经有了安装包直接更新一下仓库就可以搜索到如下图&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-1.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;执行下面命令就可以安装&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;opkg update
+opkg install tailscale
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Ps：&lt;a href=&#34;https://www.vediotalk.com/archives/13889&#34;&gt;在X86下扩容安装软件&lt;/a&gt;&lt;a href=&#34;https://www.vediotalk.com/archives/13889&#34;&gt;Overlay&lt;/a&gt;空间的教程亲测可用&lt;/p&gt;
+&lt;h2 id=&#34;openwrt-arm上安装&#34;&gt;Openwrt arm上安装&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;opkg update
+opkg install tailscale
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PS:注意安装空间的大小，占满空间会保存不了Openwrt配置，一些定时任务失效&lt;/p&gt;
+&lt;h2 id=&#34;tailscale-synolog群晖下安装&#34;&gt;&lt;a href=&#34;https://github.com/tailscale/tailscale-synology&#34;&gt;tailscale-synolog&lt;/a&gt;群晖下安装&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/tailscale/tailscale-synology/releases&#34;&gt;在Github上下载合适的版本&lt;/a&gt;上传到群晖安装即可，然后ssh登录群晖sudo tailscale up 即可&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-2.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-3.png&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;unraid下用docker安装&#34;&gt;Unraid下用docker安装&lt;/h2&gt;
+&lt;p&gt;在APPS里搜索 然后按照正常启动容器就可以，不用修改什么&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-4-1024x447.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;然后点击图标双击第一个&amp;gt;_Console 在启动的命令行窗口输入命令tailscale up 获取登录链接就可以。&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-5.png&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;ps遇到问题&#34;&gt;PS：遇到问题&lt;/h2&gt;
+&lt;p&gt;0x1安卓下远程控制0x300005f错误代码&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-6.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;要修复此问题，请在“PC名称”字段中使用您的IP地址。&lt;/p&gt;
+&lt;p&gt;0x2 &lt;a href=&#34;https://www.vediotalk.com/archives/13889&#34;&gt;openwrt 空间不足问题&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-7.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;arm重新恢复出厂设置吧&lt;/p&gt;
+&lt;p&gt;0x3 openwert ssh登录不了问题 直接未指定就行&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-17-1024x316.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;### win10升级win11后服务启动失败 解决办法 我可以确认我在从 Win10 升级到 Win11 后遇到了类似的问题，但结合了来自[@iball](&lt;a href=&#34;https://github.com/iball&#34;&gt;https://github.com/iball&lt;/a&gt;)和[@DentonGentry 的](&lt;a href=&#34;https://github.com/DentonGentry&#34;&gt;https://github.com/DentonGentry&lt;/a&gt;)两种解决方案。 * 卸载 Tailscale * 删除 %USERPROFILE%\AppData\Local\Tailscale * 重新安装尾鳞 现在需要重新登录Tailscale，登录后，Win11 中的Tailscale 效果很赞。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>ESXI 群晖下连接VPN网络报错解决</title>
+      <link>https://gao4.top/494.html/</link>
+      <pubDate>Thu, 29 Apr 2021 16:25:03 +0000</pubDate>
+      <guid>https://gao4.top/494.html/</guid>
+      <description>&lt;p&gt;前言&lt;/p&gt;
+&lt;p&gt;我的vpn服务端搭建在openwrt软路由上使用SoftEther作为相关软件，在群晖下出现&lt;/p&gt;
+&lt;p&gt;群晖 l2tp连接失败 请检查。。。。解决办法如下勾选第二个选项就行&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/04/SAVE_20210429_162054.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;啰嗦一下环境&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;esxi6.5u2&lt;/li&gt;
+&lt;li&gt;DS3617XS&lt;/li&gt;
+&lt;li&gt;MAC已修改&lt;/li&gt;
+&lt;li&gt;tun未开启&lt;/li&gt;
+&lt;li&gt;宿主机戴尔r410&lt;/li&gt;
+&lt;li&gt;网卡为博通网卡&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;为啥我判断是群晖的问题嘞，win10最新，正常连接 安卓10正常连接，白群晖正常连接&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>openwrt通过wireguard组网</title>
+      <link>https://gao4.top/444.html/</link>
+      <pubDate>Wed, 24 Feb 2021 15:01:46 +0000</pubDate>
+      <guid>https://gao4.top/444.html/</guid>
+      <description>&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;
+&lt;p&gt;网上找的图很好理解应该&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/02/Screenshot_2021-02-19-18-10-47-849_com.google.android.youtube-1024x473.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;wireguard原理就不多做解释了，我们只是人为的分客户端与服务端，因为国情在这，有时候两端不可都是可以互相访问的公网。这是理论上最好的访问模型，但实际上使用也就服务端访问这种模式。&lt;/p&gt;
+&lt;p&gt;2021年5月21日更新&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-18.png&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;公网环境&#34;&gt;公网环境&lt;/h3&gt;
+&lt;p&gt;wireguard实际是支持ipv6的而我的环境是ipv4动态公网就不多做关于ipv6的介绍了，在2018年CN已经全面覆盖改造ipv6了，至少移动手机端与家庭宽带都支持ipv6了。&lt;/p&gt;
+&lt;h2 id=&#34;设备环境&#34;&gt;设备环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenWrt R21.2.1&lt;/li&gt;
+&lt;li&gt;公网IPv4&lt;/li&gt;
+&lt;li&gt;移动手机端&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;openwrt端配置&#34;&gt;openwrt端配置&lt;/h2&gt;
+&lt;p&gt;软件源 系统-软件包-发行版软件源&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;src/gz openwrt_core https://mirrors.cloud.tencent.com/lede/snapshots/targets/x86/64/packages
+src/gz openwrt_base https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/base
+src/gz openwrt_freifunk https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/freifunk
+src/gz openwrt_helloworld https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/helloworld
+src/gz openwrt_lienol https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/lienol
+src/gz openwrt_luci https://mirrors.cloud.tencent.com/lede/releases/18.06.8/packages/x86_64/luci
+src/gz openwrt_packages https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/packages
+src/gz openwrt_routing https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/routing
+src/gz openwrt_telephony https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/telephony
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;安装WG&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;opkg update
+opkg install wireguard luci-app-wireguard luci-i18n-wireguard-zh-cn wireguard-tools
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/02/Snipaste_2021-02-24_15-01-01.png&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;生成密钥&#34;&gt;生成密钥&lt;/h2&gt;
+&lt;p&gt;可以在终端下生成 也可以在各客户端下生成 privatekey=私钥 publickey=公钥&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkdir /etc/wireguard
+cd /etc/wireguard
+wg genkey | tee privatekey | wg pubkey &amp;gt; publickey
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;配置接口 依次找到&lt;a href=&#34;http://openwrt.lan/cgi-bin/luci/admin/network/network&#34;&gt;网络-&amp;gt;接口&lt;/a&gt;-&amp;gt;添加新接口，设置内容如下&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Openwrt OpenConnect VPN 搭建设置教程</title>
+      <link>https://gao4.top/293.html/</link>
+      <pubDate>Wed, 30 Sep 2020 13:52:00 +0000</pubDate>
+      <guid>https://gao4.top/293.html/</guid>
+      <description>&lt;p&gt;## 2022年1月4日更新如果luci没有界面可以去软件源手动下载安装 流程如下图 ![流程图](&lt;a href=&#34;https://gao4.top/wp-content/uploads/2022/01/851998809.png&#34;&gt;https://gao4.top/wp-content/uploads/2022/01/851998809.png&lt;/a&gt;) ```Unknown package &amp;rsquo;luci-app-ocserv*&amp;rsquo;. Collected errors: * opkg_install_cmd: Cannot install package luci-app-ocserv*. root@OpenWrt:&lt;del&gt;# wget &lt;a href=&#34;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&#34;&gt;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&lt;/a&gt;_24kc/luci/luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk &amp;ndash;2022-01-04 12:01:53&amp;ndash; &lt;a href=&#34;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&#34;&gt;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&lt;/a&gt;_24kc/luci/luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk Resolving mirrors.cloud.tencent.com&amp;hellip; 125.39.223.218, 42.63.50.204, 220.194.79.73, &amp;hellip; Connecting to mirrors.cloud.tencent.com|125.39.223.218|:443&amp;hellip; connected. HTTP request sent, awaiting response&amp;hellip; 200 OK Length: 5314 (5.2K) [application/octet-stream] Saving to: &amp;rsquo;luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk&amp;rsquo; luci-app-ocserv_git-20.356.64372-1259bb1 100%[================================================================================&amp;gt;] 5.19K &amp;ndash;.-KB/s in 0.001s 2022-01-04 12:01:56 (4.28 MB/s) - &amp;rsquo;luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk&amp;rsquo; saved [5314/5314] root@OpenWrt:&lt;/del&gt;# ls luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk root@OpenWrt:&lt;del&gt;# opkg install luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk Installing luci-app-ocserv (git-20.356.64372-1259bb1-1) to root&amp;hellip; Configuring luci-app-ocserv. root@OpenWrt:&lt;/del&gt;# reboot root@OpenWrt:~# ``` 怎么知道当前openwrt架构的软件源包去后台看看就好了 ![复制浏览器搜索](&lt;a href=&#34;https://gao4.top/wp-content/uploads/2022/01/816834899.png&#34;&gt;https://gao4.top/wp-content/uploads/2022/01/816834899.png&lt;/a&gt;)&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

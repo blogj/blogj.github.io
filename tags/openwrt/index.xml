@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Openwrt on 孤岛</title>
+    <link>https://gao4.top/tags/openwrt/</link>
+    <description>Recent content in Openwrt on 孤岛</description>
+    <image>
+      <title>孤岛</title>
+      <url>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://gao4.top/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.148.0</generator>
+    <language>zh</language>
+    <lastBuildDate>Fri, 06 Sep 2024 09:20:02 +0800</lastBuildDate>
+    <atom:link href="https://gao4.top/tags/openwrt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Openwrt系列之打开ipv6端口访问</title>
+      <link>https://gao4.top/20240906.html/</link>
+      <pubDate>Fri, 06 Sep 2024 09:20:02 +0800</pubDate>
+      <guid>https://gao4.top/20240906.html/</guid>
+      <description>&lt;h2 id=&#34;打开ipv6-访问&#34;&gt;打开ipv6 访问&lt;/h2&gt;
+&lt;p&gt;很简单只需要把防火墙打开就行就可以访问端口上的openwrt服务&lt;/p&gt;
+&lt;h3 id=&#34;第一步&#34;&gt;第一步&lt;/h3&gt;
+&lt;p&gt;打开防火墙区域设置
+&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2024/9yue6hao/Snipaste_2024-09-06_10-28-21.png&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;第二步&#34;&gt;第二步&lt;/h3&gt;
+&lt;p&gt;防火墙 通信规则
+&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2024/9yue6hao/Snipaste_2024-09-06_10-34-34.png&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Tailscale安装到ARM openwrt上</title>
+      <link>https://gao4.top/1076.html/</link>
+      <pubDate>Sun, 12 Jun 2022 12:09:10 +0000</pubDate>
+      <guid>https://gao4.top/1076.html/</guid>
+      <description>&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;http://gao4.top/wp-content/uploads/2022/06/FotoJet-1024x576.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;下载到tmp目录&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;wget https://pkgs.tailscale.com/stable/tailscale_1.70.0_arm64.tgz -P /tmp
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;解压压缩包并移动二进制文件&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cd /tmp
+tar x -zvf tailscale_1.70.0_arm64.tgz
+cd tailscal_1.70.0_arm64
+mv tailscale tailscaled /usr/sbin/
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;安装依赖文件&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;opkg update
+opkg install ca-bundle kmod-tun
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;创建守护脚本文件&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;vim /etc/init.d/tailscale
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;写入如下代码&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;#!/bin/sh /etc/rc.common
+
+# Copyright 2020 Google LLC.
+# SPDX-License-Identifier: Apache-2.0
+
+USE_PROCD=1
+START=80
+
+start_service() {
+  /usr/sbin/tailscaled --cleanup
+
+  procd_open_instance 
+  procd_set_param command /usr/sbin/tailscaled
+
+  # Set the port to listen on for incoming VPN packets.
+  # Remote nodes will automatically be informed about the new port number,
+  # but you might want to configure this in order to set external firewall
+  # settings.
+  procd_append_param command --port 41641
+
+  # OpenWRT /var is a symlink to /tmp, so write persistent state elsewhere.
+  procd_append_param command --state /etc/tailscale/tailscaled.state
+
+  procd_set_param respawn
+  procd_set_param stdout 1
+  procd_set_param stderr 1
+
+  procd_close_instance
+}
+
+stop_service() {
+  /usr/sbin/tailscaled --cleanup
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;收尾工作&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>折腾NAS中用的软件资源分享</title>
+      <link>https://gao4.top/686.html/</link>
+      <pubDate>Sun, 24 Oct 2021 18:00:00 +0000</pubDate>
+      <guid>https://gao4.top/686.html/</guid>
+      <description>&lt;h1 id=&#34;资源链接阿里云盘&#34;&gt;资源链接阿里云盘&lt;/h1&gt;
+&lt;p&gt;我用阿里云盘分享了「NAS常用软件引导软件系统镜像」，你可以不限速下载🚀&lt;br&gt;
+复制这段内容打开「阿里云盘」App 即可获取&lt;br&gt;
+链接：&lt;a href=&#34;https://www.aliyundrive.com/s/QUm851phfC7&#34;&gt;https://www.aliyundrive.com/s/QUm851phfC7&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;esxi常用系统ova模板&#34;&gt;Esxi常用系统ova模板&lt;/h2&gt;
+&lt;p&gt;搜集来自于sysin博客，sysin博主分享是百度云，本博客下载下来后上传至阿里云盘全部为&lt;strong&gt;标准分区（新版）&lt;/strong&gt;&lt;br&gt;
+&lt;img alt=&#34;全部模板&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/680834712.png&#34; title=&#34;全部模板&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;模板来源&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/3310680356.png&#34; title=&#34;模板来源&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;esxi67集成25g与8111网卡驱动&#34;&gt;ESXi6.7集成2.5G与8111网卡驱动&lt;/h2&gt;
+&lt;p&gt;集成了rtl8125b网卡驱动以及rtl8111驱动，为什么不集成7.0的，是因为集成不了，据说新版本esxi7.0有什么改动。&lt;br&gt;
+&lt;img alt=&#34;esxi6.7驱动&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/185705712.png&#34; title=&#34;esxi6.7驱动&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;openwrt-x86_64软路由&#34;&gt;openwrt x86_64软路由&lt;/h2&gt;
+&lt;p&gt;使用GitHub编译结果，&lt;a href=&#34;https://github.com/Qifcn/Actions-OpenWrt&#34;&gt;Qifcn/Actions-OpenWrt: A template for building OpenWrt with GitHub Actions | 使用 GitHub Actions 云编译 OpenWrt&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;集成了&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;tailscale&lt;/li&gt;
+&lt;li&gt;wireguard&lt;/li&gt;
+&lt;li&gt;内核分区扩大至100m 根分区扩至512m&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img alt=&#34;压缩包&#34; loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/10/1623699456.png&#34; title=&#34;压缩包&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;resilio分享&#34;&gt;resilio分享&lt;/h3&gt;
+&lt;p&gt;这些软件我集成密钥形式&lt;br&gt;
+&lt;a href=&#34;https://gao4.top/sync&#34;&gt;SYNC同步网盘 - 孤岛 (gao4.top)&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>openwrt通过wireguard组网</title>
+      <link>https://gao4.top/444.html/</link>
+      <pubDate>Wed, 24 Feb 2021 15:01:46 +0000</pubDate>
+      <guid>https://gao4.top/444.html/</guid>
+      <description>&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;
+&lt;p&gt;网上找的图很好理解应该&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/02/Screenshot_2021-02-19-18-10-47-849_com.google.android.youtube-1024x473.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;wireguard原理就不多做解释了，我们只是人为的分客户端与服务端，因为国情在这，有时候两端不可都是可以互相访问的公网。这是理论上最好的访问模型，但实际上使用也就服务端访问这种模式。&lt;/p&gt;
+&lt;p&gt;2021年5月21日更新&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/05/image-18.png&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;公网环境&#34;&gt;公网环境&lt;/h3&gt;
+&lt;p&gt;wireguard实际是支持ipv6的而我的环境是ipv4动态公网就不多做关于ipv6的介绍了，在2018年CN已经全面覆盖改造ipv6了，至少移动手机端与家庭宽带都支持ipv6了。&lt;/p&gt;
+&lt;h2 id=&#34;设备环境&#34;&gt;设备环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenWrt R21.2.1&lt;/li&gt;
+&lt;li&gt;公网IPv4&lt;/li&gt;
+&lt;li&gt;移动手机端&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;openwrt端配置&#34;&gt;openwrt端配置&lt;/h2&gt;
+&lt;p&gt;软件源 系统-软件包-发行版软件源&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;src/gz openwrt_core https://mirrors.cloud.tencent.com/lede/snapshots/targets/x86/64/packages
+src/gz openwrt_base https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/base
+src/gz openwrt_freifunk https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/freifunk
+src/gz openwrt_helloworld https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/helloworld
+src/gz openwrt_lienol https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/lienol
+src/gz openwrt_luci https://mirrors.cloud.tencent.com/lede/releases/18.06.8/packages/x86_64/luci
+src/gz openwrt_packages https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/packages
+src/gz openwrt_routing https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/routing
+src/gz openwrt_telephony https://mirrors.cloud.tencent.com/lede/snapshots/packages/x86_64/telephony
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;安装WG&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;opkg update
+opkg install wireguard luci-app-wireguard luci-i18n-wireguard-zh-cn wireguard-tools
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://gao4.top/wp-content/uploads/2021/02/Snipaste_2021-02-24_15-01-01.png&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;生成密钥&#34;&gt;生成密钥&lt;/h2&gt;
+&lt;p&gt;可以在终端下生成 也可以在各客户端下生成 privatekey=私钥 publickey=公钥&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkdir /etc/wireguard
+cd /etc/wireguard
+wg genkey | tee privatekey | wg pubkey &amp;gt; publickey
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;配置接口 依次找到&lt;a href=&#34;http://openwrt.lan/cgi-bin/luci/admin/network/network&#34;&gt;网络-&amp;gt;接口&lt;/a&gt;-&amp;gt;添加新接口，设置内容如下&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Openwrt OpenConnect VPN 搭建设置教程</title>
+      <link>https://gao4.top/293.html/</link>
+      <pubDate>Wed, 30 Sep 2020 13:52:00 +0000</pubDate>
+      <guid>https://gao4.top/293.html/</guid>
+      <description>&lt;p&gt;## 2022年1月4日更新如果luci没有界面可以去软件源手动下载安装 流程如下图 ![流程图](&lt;a href=&#34;https://gao4.top/wp-content/uploads/2022/01/851998809.png&#34;&gt;https://gao4.top/wp-content/uploads/2022/01/851998809.png&lt;/a&gt;) ```Unknown package &amp;rsquo;luci-app-ocserv*&amp;rsquo;. Collected errors: * opkg_install_cmd: Cannot install package luci-app-ocserv*. root@OpenWrt:&lt;del&gt;# wget &lt;a href=&#34;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&#34;&gt;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&lt;/a&gt;_24kc/luci/luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk &amp;ndash;2022-01-04 12:01:53&amp;ndash; &lt;a href=&#34;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&#34;&gt;https://mirrors.cloud.tencent.com/lede/releases/18.06.9/packages/mipsel&lt;/a&gt;_24kc/luci/luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk Resolving mirrors.cloud.tencent.com&amp;hellip; 125.39.223.218, 42.63.50.204, 220.194.79.73, &amp;hellip; Connecting to mirrors.cloud.tencent.com|125.39.223.218|:443&amp;hellip; connected. HTTP request sent, awaiting response&amp;hellip; 200 OK Length: 5314 (5.2K) [application/octet-stream] Saving to: &amp;rsquo;luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk&amp;rsquo; luci-app-ocserv_git-20.356.64372-1259bb1 100%[================================================================================&amp;gt;] 5.19K &amp;ndash;.-KB/s in 0.001s 2022-01-04 12:01:56 (4.28 MB/s) - &amp;rsquo;luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk&amp;rsquo; saved [5314/5314] root@OpenWrt:&lt;/del&gt;# ls luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk root@OpenWrt:&lt;del&gt;# opkg install luci-app-ocserv_git-20.356.64372-1259bb1-1_all.ipk Installing luci-app-ocserv (git-20.356.64372-1259bb1-1) to root&amp;hellip; Configuring luci-app-ocserv. root@OpenWrt:&lt;/del&gt;# reboot root@OpenWrt:~# ``` 怎么知道当前openwrt架构的软件源包去后台看看就好了 ![复制浏览器搜索](&lt;a href=&#34;https://gao4.top/wp-content/uploads/2022/01/816834899.png&#34;&gt;https://gao4.top/wp-content/uploads/2022/01/816834899.png&lt;/a&gt;)&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
