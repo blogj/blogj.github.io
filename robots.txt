@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://gao4.top/sitemap.xml
